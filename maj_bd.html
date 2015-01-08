@@ -1,0 +1,116 @@
+<!doctype html>
+<html>
+<head>
+<meta charset='utf-8'>
+<script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+</head>
+
+<body style="margin: 0;">
+<p id="prep">
+--vider les tables _old<br/>
+TRUNCATE ob_bat_old;<br/>
+TRUNCATE ob_bat_dgeo_old;<br/>
+TRUNCATE ob_event_old;<br/>
+TRUNCATE ob_sal_old;<br/>
+--mettre les anciennes données dans les tables _old<br/>
+INSERT INTO ob_bat_old (SELECT * FROM ob_bat);<br/>
+INSERT INTO ob_bat_dgeo_old (SELECT * FROM ob_bat_dgeo);<br/>
+INSERT INTO ob_event_old (SELECT * FROM ob_event);<br/>
+INSERT INTO ob_sal_old (SELECT * FROM ob_sal);<br/>
+--vider les tables utilisées</br>
+TRUNCATE ob_bat;<br/>
+TRUNCATE ob_bat_dgeo;<br/>
+TRUNCATE ob_event;<br/>
+TRUNCATE ob_sal;<br/>
+</p>
+<p>--mettre les données du serveur dans la base BD_DGEO
+<div id="bat"></div>
+<div id="bat_dgeo"></div>
+<div id="event"></div>
+<div id="sal"></div>
+<script>
+d3.json('https://gestbat.ctip.ch/api/maj/bat', function(data) { 
+	var bat = d3.select('div#bat');
+	bat.selectAll('p.batdata')
+		.data(data)
+		.enter()
+		.append('p')
+		.attr({class: 'batdata'})
+		.text(function(d) { return 'INSERT INTO ob_bat VALUES (' + 
+			d.id_bat + ',' + 
+			'*#%' + d.nom_bat + '*#%,' +
+			'*#%' + d.rue + '*#%,' +		
+			d.no_rue + ',' +
+			d.npa + ',' +	
+			'*#%' + d.localite + '*#%,' +
+			d.no_com_fed + ',' +
+			d.annee_constr + ',' +
+			d.annee_renov + ',' +
+			d.lat + ',' +
+			d.lng + ',' +
+			'*#%' + d.ctip_bat_nom + '*#%,' +
+			'*#%' + d.ctip_localite + '*#%,' +		
+			'*#%' + d.site + '*#%,' +
+			d.egid + ',' +
+			d.estrid + ');'
+		})
+});
+
+d3.json('https://gestbat.ctip.ch/api/maj/bat_dgeo', function(data) { 
+	var bat = d3.select('div#bat_dgeo');
+	bat.selectAll('p.bat_dgeodata')
+		.data(data)
+		.enter()
+		.append('p')
+		.attr({class: 'bat_dgeodata'})
+		.text(function(d) { return 'INSERT INTO ob_bat_dgeo VALUES (' + 
+			d.id_bat_dgeo + ',' + 
+			d.id_etabl + ',' + 
+			d.id_bat + ',' + 
+			d.dir + ',' + 
+			d.util + ',' + 
+			d.dist_dir + ',' + 
+			d.dist_hep + ',' + 
+			'*#%' + d.ctip_comment + '*#%,' +
+			'*#%' + d.ctip_cl_itin + '*#%);'
+		})
+});
+
+d3.json('https://gestbat.ctip.ch/api/maj/event', function(data) { 
+	var bat = d3.select('div#event');
+	bat.selectAll('p.eventdata')
+		.data(data)
+		.enter()
+		.append('p')
+		.attr({class: 'eventdata'})
+		.text(function(d) { return 'INSERT INTO ob_event VALUES (' + 
+			d.id + ',' + 
+			'*#%' + d.typ_event + '*#%,' +
+			d.id_bat + ',' + 
+			'*#%' + d.nom_bat + '*#%,' +
+			d.id_etabl + ',' + 
+			'*#%' + d.date + '*#%,' +
+			d.vu + ');'
+		})
+});
+
+d3.json('https://gestbat.ctip.ch/api/maj/sal', function(data) { 
+	var bat = d3.select('div#sal');
+	bat.selectAll('p.saldata')
+		.data(data)
+		.enter()
+		.append('p')
+		.attr({class: 'saldata'})
+		.text(function(d) { return 'INSERT INTO ob_sal VALUES (' + 
+			d.id_bat + ',' + 
+			d.qte + ',' + 
+			d.id_typ + ',' + 
+			d.id_sal + ');'
+		})
+});
+
+
+</script>
+
+</body>
+</html>
